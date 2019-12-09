@@ -9,15 +9,15 @@ import math
 from geopy.distance import geodesic
 
 #Define all that needs
-multicast_group = '224.4.20.12'
-multicast_port = 10000
-port = 10000
+multicast_group = '224.4.20.15'
+multicast_port = 9999
+port = 9999
 hop_threshold = 3
 time_threshold = 10
 pesan_buffer = []
 base_latitude = 19.99
 base_longitude = 73.78
-exist_config = False #True jika pesan yang sudah ada di config tidak dimasukan ke buffer lagi. False sebaliknya.
+exist_config = True #True jika pesan yang sudah ada di config tidak dimasukan ke buffer lagi. False sebaliknya.
 
 # Socket Configuration
 server_address = ('', port)
@@ -51,8 +51,8 @@ def receiver():
         prev_sender = data_split[7]
 
         jarak = calcDistance(lat,lon)
-        time_delay = jarak / 10
-        time.sleep(time_delay)
+        # time_delay = jarak / 10
+        # time.sleep(time_delay)
 
         if hostname == receivers:
             print("Pesan Diterima")
