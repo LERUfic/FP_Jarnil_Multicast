@@ -8,8 +8,6 @@ import random
 import math
 from geopy.distance import geodesic
 
-id_computer = 1
-
 #Define all that needs
 multicast_group = '224.4.20.12'
 multicast_port = 10000
@@ -43,11 +41,13 @@ def receiver():
         data, address = sock.recvfrom(1024)
         data = data.decode('utf-8')
         data_split = data.split('|')
-        pesan = data_split[0]
-        hop = int(data_split[1])
+        sender = data_split[0]
+        pesan = data_split[1]
         waktu = datetime.datetime.strptime(data_split[2], '%Y-%m-%d %H:%M:%S.%f')
-        lat = data_split[3]
-        lon = data_split[4]
+        receiver = data_split[3]
+        hop = int(data_split[4])
+        lat = data_split[5]
+        lon = data_split[6]
 
         jarak = calcDistance(lat,lon)
         time_delay = jarak / 10
@@ -55,24 +55,28 @@ def receiver():
 
         print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,hop,waktu,lat,lon, jarak))
 
-        curr_time = datetime.datetime.now()
-        current_hop = hop + 1
+        if hostname == receiver:
+            print("Pesan Diterima")
+            print(pesan)
+        else:
+            curr_time = datetime.datetime.now()
+            current_hop = hop + 1
 
-        if current_hop < hop_threshold:
-            print("Jumlah Hop Masih Aman")
-            if curr_time < waktu:
-                print("Pesan Masih Belum Expired")
-                print("Masukan Ke Buffer Pesan")
-                addBuffer(pesan,current_hop,waktu,fix_latitude,fix_longitude)
+            if current_hop < hop_threshold:
+                print("Jumlah Hop Masih Aman")
+                if curr_time < waktu:
+                    print("Pesan Masih Belum Expired")
+                    print("Masukan Ke Buffer Pesan")
+                    addBuffer(pesan,current_hop,waktu,fix_latitude,fix_longitude)
 
 
-def addBuffer(pesan,hop,waktu,lat,lon):
-    construct_msg = pesan+'|'+str(hop)+'|'+str(waktu)+'|'+str(lat)+'|'+str(lon)
+def addBuffer(sender,pesan,waktu,receiver,hop,lat,lon):
+    construct_msg = sender+'|'+pesan+'|'+str(waktu)+'|'+receiver+'|'+str(hop)+'|'+str(lat)+'|'+str(lon)
     global pesan_buffer
     if exist_config:
         if hop > 0 and len(pesan_buffer) > 0:
             prev_count = hop - 1
-            prev_hop = pesan+'|'+str(prev_count)+'|'+str(waktu)
+            prev_hop = sender+'|'+pesan+'|'+str(waktu)+'|'+receiver
             if prev_hop in pesan_buffer:
                 print("Sudah ada di buffer. Tidak Perlu dimasukan kembali")
             else:
@@ -89,19 +93,22 @@ def sendBuffer():
     while True:
         remove_index = []
         if len(pesan_buffer) > 0:
-            print (pesan_buffer)
+            print(pesan_buffer)
             for i in range(len(pesan_buffer)):
                 data_split = pesan_buffer[i].split('|')
-                pesan = data_split[0]
-                hop = int(data_split[1])
+                sender = data_split[0]
+                pesan = data_split[1]
                 waktu = datetime.datetime.strptime(data_split[2], '%Y-%m-%d %H:%M:%S.%f')
-                lat = data_split[3]
-                lon = data_split[4]
+                receiver = data_split[3]
+                hop = int(data_split[4])
+                lat = data_split[5]
+                lon = data_split[6]
 
                 curr_time = datetime.datetime.now()
                 if curr_time < waktu:
                     print("Pesan Belum Expired")
                     print("Kirim Pesan ke Multicast Group")
+                    # sock.sendto(pesan_buffer[i], (multicast_group,multicast_port))
                     sock.sendto(pesan_buffer[i].encode('utf-8'), (multicast_group,multicast_port))
                     time.sleep(5)
                 else:
@@ -124,9 +131,11 @@ x.start()
 y = threading.Thread(target=sendBuffer, args=())
 y.start()
 
+hostname = input('Masukan Hostname: ')
 while True:
+    penerima = input('Masukan Hostname Penerima: ')
     pesan = input('Masukan Pesan: ')
     print("Memasukan Pesan ke Buffer")
     waktu = datetime.datetime.now() + datetime.timedelta(minutes=time_threshold)
-    addBuffer(pesan,0,waktu,fix_latitude,fix_longitude)
+    addBuffer(hostname, pesan, waktu, penerima, 0, fix_latitude,fix_longitude)
 
