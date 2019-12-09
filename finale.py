@@ -44,18 +44,18 @@ def receiver():
         sender = data_split[0]
         pesan = data_split[1]
         waktu = datetime.datetime.strptime(data_split[2], '%Y-%m-%d %H:%M:%S.%f')
-        receiver = data_split[3]
+        receivers = data_split[3]
         hop = int(data_split[4])
         lat = data_split[5]
         lon = data_split[6]
 
         jarak = calcDistance(lat,lon)
-        time_delay = jarak / 10
-        time.sleep(time_delay)
+        # time_delay = jarak / 10
+        # time.sleep(time_delay)
 
         print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,hop,waktu,lat,lon, jarak))
 
-        if hostname == receiver:
+        if hostname == receivers:
             print("Pesan Diterima")
             print(pesan)
         else:
@@ -67,16 +67,17 @@ def receiver():
                 if curr_time < waktu:
                     print("Pesan Masih Belum Expired")
                     print("Masukan Ke Buffer Pesan")
-                    addBuffer(sender, pesan, waktu, penerima, current_hop, fix_latitude,fix_longitude)
+                    if sender != hostname:
+                        addBuffer(sender, pesan, waktu, receivers, current_hop, fix_latitude,fix_longitude)
 
 
-def addBuffer(sender,pesan,waktu,receiver,hop,lat,lon):
-    construct_msg = sender+'|'+pesan+'|'+str(waktu)+'|'+receiver+'|'+str(hop)+'|'+str(lat)+'|'+str(lon)
+def addBuffer(sender,pesan,waktu,receivers,hop,lat,lon):
+    construct_msg = sender+'|'+pesan+'|'+str(waktu)+'|'+receivers+'|'+str(hop)+'|'+str(lat)+'|'+str(lon)
     global pesan_buffer
     if exist_config:
         if hop > 0 and len(pesan_buffer) > 0:
             prev_count = hop - 1
-            prev_hop = sender+'|'+pesan+'|'+str(waktu)+'|'+receiver
+            prev_hop = sender+'|'+pesan+'|'+str(waktu)+'|'+receivers
             if prev_hop in pesan_buffer:
                 print("Sudah ada di buffer. Tidak Perlu dimasukan kembali")
             else:
@@ -99,7 +100,7 @@ def sendBuffer():
                 sender = data_split[0]
                 pesan = data_split[1]
                 waktu = datetime.datetime.strptime(data_split[2], '%Y-%m-%d %H:%M:%S.%f')
-                receiver = data_split[3]
+                receivers = data_split[3]
                 hop = int(data_split[4])
                 lat = data_split[5]
                 lon = data_split[6]
