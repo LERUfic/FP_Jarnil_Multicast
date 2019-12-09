@@ -83,7 +83,7 @@ def addBuffer(sender,pesan,waktu,receivers,hop,lat,lon):
         if hop > 0 and len(pesan_buffer) > 0:
             prev_count = hop - 1
             prev_hop = sender+'|'+pesan+'|'+str(waktu)+'|'+receivers
-            if prev_hop in pesan_buffer:
+            if construct_msg in pesan_buffer:
                 print("Sudah ada di buffer. Tidak Perlu dimasukan kembali")
             else:
                 pesan_buffer.append(construct_msg)
