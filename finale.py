@@ -67,7 +67,7 @@ def receiver():
                 if curr_time < waktu:
                     print("Pesan Masih Belum Expired")
                     print("Masukan Ke Buffer Pesan")
-                    addBuffer(pesan,current_hop,waktu,fix_latitude,fix_longitude)
+                    addBuffer(sender, pesan, waktu, penerima, current_hop, fix_latitude,fix_longitude)
 
 
 def addBuffer(sender,pesan,waktu,receiver,hop,lat,lon):
