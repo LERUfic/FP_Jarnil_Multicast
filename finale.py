@@ -67,11 +67,13 @@ def addBuffer(pesan,hop,waktu,lat,lon):
     if exist_config:
         if hop > 0 and len(pesan_buffer) > 0:
             prev_count = hop - 1
-            prev_hop = pesan+'|'+str(prev_count)+'|'+str(waktu)+'|'+str(lat)+'|'+str(lon)
+            prev_hop = pesan+'|'+str(prev_count)+'|'+str(waktu)
             if prev_hop in pesan_buffer:
                 print("Sudah ada di buffer. Tidak Perlu dimasukan kembali")
             else:
                 pesan_buffer.append(construct_msg)
+        else:
+            pesan_buffer.append(construct_msg)    
     else:
         pesan_buffer.append(construct_msg)
     return
