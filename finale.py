@@ -48,6 +48,7 @@ def receiver():
         hop = int(data_split[4])
         lat = data_split[5]
         lon = data_split[6]
+        prev_sender = data_split[7]
 
         jarak = calcDistance(lat,lon)
         time_delay = jarak / 10
@@ -66,12 +67,13 @@ def receiver():
                     print("Pesan Masih Belum Expired")
                     print("Masukan Ke Buffer Pesan")
                     if sender != hostname:
+                        if hostname != prev_sender
                         print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,current_hop,waktu,lat,lon, jarak))
                         addBuffer(sender, pesan, waktu, receivers, current_hop, fix_latitude,fix_longitude)
 
 
 def addBuffer(sender,pesan,waktu,receivers,hop,lat,lon):
-    construct_msg = sender+'|'+pesan+'|'+str(waktu)+'|'+receivers+'|'+str(hop)+'|'+str(lat)+'|'+str(lon)
+    construct_msg = sender+'|'+pesan+'|'+str(waktu)+'|'+receivers+'|'+str(hop)+'|'+str(lat)+'|'+str(lon)+'|'+hostname
     global pesan_buffer
     if exist_config:
         if hop > 0 and len(pesan_buffer) > 0:
@@ -103,6 +105,7 @@ def sendBuffer():
                 hop = int(data_split[4])
                 lat = data_split[5]
                 lon = data_split[6]
+                prev_sender = data_split[7]
 
                 curr_time = datetime.datetime.now()
                 if curr_time < waktu:
