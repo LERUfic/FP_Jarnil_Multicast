@@ -67,9 +67,9 @@ def receiver():
                     print("Pesan Masih Belum Expired")
                     print("Masukan Ke Buffer Pesan")
                     if sender != hostname:
-                        if hostname != prev_sender
-                        print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,current_hop,waktu,lat,lon, jarak))
-                        addBuffer(sender, pesan, waktu, receivers, current_hop, fix_latitude,fix_longitude)
+                        if hostname != prev_sender:
+                            print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,current_hop,waktu,lat,lon, jarak))
+                            addBuffer(sender, pesan, waktu, receivers, current_hop, fix_latitude,fix_longitude)
 
 
 def addBuffer(sender,pesan,waktu,receivers,hop,lat,lon):
