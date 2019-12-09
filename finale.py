@@ -13,7 +13,7 @@ multicast_group = '224.4.20.12'
 multicast_port = 10000
 port = 10000
 hop_threshold = 3
-time_threshold = 1
+time_threshold = 10
 pesan_buffer = []
 base_latitude = 19.99
 base_longitude = 73.78
@@ -50,10 +50,8 @@ def receiver():
         lon = data_split[6]
 
         jarak = calcDistance(lat,lon)
-        time_delay = jarak / 100
+        time_delay = jarak / 10
         time.sleep(time_delay)
-
-        print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,hop,waktu,lat,lon, jarak))
 
         if hostname == receivers:
             print("Pesan Diterima")
@@ -68,6 +66,7 @@ def receiver():
                     print("Pesan Masih Belum Expired")
                     print("Masukan Ke Buffer Pesan")
                     if sender != hostname:
+                        print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,current_hop,waktu,lat,lon, jarak))
                         addBuffer(sender, pesan, waktu, receivers, current_hop, fix_latitude,fix_longitude)
 
 
