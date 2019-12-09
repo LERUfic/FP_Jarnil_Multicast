@@ -17,6 +17,7 @@ time_threshold = 10
 pesan_buffer = []
 base_latitude = 19.99
 base_longitude = 73.78
+jarak_threshold = 5000
 exist_config = True #True jika pesan yang sudah ada di config tidak dimasukan ke buffer lagi. False sebaliknya.
 
 # Socket Configuration
@@ -54,22 +55,25 @@ def receiver():
         time_delay = jarak / 100
         time.sleep(time_delay)
 
-        if hostname == receivers:
-            print("Pesan Diterima")
-            print(pesan)
+        if jarak > jarak_threshold:
+            print("Jarak Di atas Threshold. Pesan dihapus")
         else:
-            curr_time = datetime.datetime.now()
-            current_hop = hop + 1
+            if hostname == receivers:
+                print("Pesan Diterima")
+                print(pesan)
+            else:
+                curr_time = datetime.datetime.now()
+                current_hop = hop + 1
 
-            if current_hop < hop_threshold:
-                print("Jumlah Hop Masih Aman")
-                if curr_time < waktu:
-                    print("Pesan Masih Belum Expired")
-                    print("Masukan Ke Buffer Pesan")
-                    if sender != hostname:
-                        if hostname != prev_sender:
-                            print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,current_hop,waktu,lat,lon, jarak))
-                            addBuffer(sender, pesan, waktu, receivers, current_hop, fix_latitude,fix_longitude)
+                if current_hop < hop_threshold:
+                    print("Jumlah Hop Masih Aman")
+                    if curr_time < waktu:
+                        print("Pesan Masih Belum Expired")
+                        print("Masukan Ke Buffer Pesan")
+                        if sender != hostname:
+                            if hostname != prev_sender:
+                                print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,current_hop,waktu,lat,lon, jarak))
+                                addBuffer(sender, pesan, waktu, receivers, current_hop, fix_latitude,fix_longitude)
 
 
 def addBuffer(sender,pesan,waktu,receivers,hop,lat,lon):
