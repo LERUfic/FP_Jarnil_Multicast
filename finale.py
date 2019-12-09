@@ -8,6 +8,8 @@ import random
 import math
 from geopy.distance import geodesic
 
+id_computer = 1
+
 #Define all that needs
 multicast_group = '224.4.20.12'
 multicast_port = 10000
@@ -39,6 +41,7 @@ fix_longitude = base_longitude+dec_lon
 def receiver():
     while True:
         data, address = sock.recvfrom(1024)
+        data = data.decode('utf-8')
         data_split = data.split('|')
         pesan = data_split[0]
         hop = int(data_split[1])
@@ -86,7 +89,7 @@ def sendBuffer():
     while True:
         remove_index = []
         if len(pesan_buffer) > 0:
-            print pesan_buffer
+            print (pesan_buffer)
             for i in range(len(pesan_buffer)):
                 data_split = pesan_buffer[i].split('|')
                 pesan = data_split[0]
@@ -99,7 +102,7 @@ def sendBuffer():
                 if curr_time < waktu:
                     print("Pesan Belum Expired")
                     print("Kirim Pesan ke Multicast Group")
-                    sock.sendto(pesan_buffer[i], (multicast_group,multicast_port))
+                    sock.sendto(pesan_buffer[i].encode('utf-8'), (multicast_group,multicast_port))
                     time.sleep(5)
                 else:
                     remove_index.append(i)
@@ -122,7 +125,7 @@ y = threading.Thread(target=sendBuffer, args=())
 y.start()
 
 while True:
-    pesan = raw_input('Masukan Pesan: ')
+    pesan = input('Masukan Pesan: ')
     print("Memasukan Pesan ke Buffer")
     waktu = datetime.datetime.now() + datetime.timedelta(minutes=time_threshold)
     addBuffer(pesan,0,waktu,fix_latitude,fix_longitude)
