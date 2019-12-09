@@ -50,7 +50,7 @@ def receiver():
         lon = data_split[6]
 
         jarak = calcDistance(lat,lon)
-        time_delay = jarak / 10
+        time_delay = jarak / 100
         time.sleep(time_delay)
 
         print("Pesan: {} | Hop: {} | Expired Time: {} | Sender_lat: {} | Sender_lon: {} | Distance: {} meter".format(pesan,hop,waktu,lat,lon, jarak))
