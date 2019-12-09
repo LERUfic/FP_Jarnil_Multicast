@@ -51,8 +51,8 @@ def receiver():
         prev_sender = data_split[7]
 
         jarak = calcDistance(lat,lon)
-        # time_delay = jarak / 10
-        # time.sleep(time_delay)
+        time_delay = jarak / 100
+        time.sleep(time_delay)
 
         if hostname == receivers:
             print("Pesan Diterima")
@@ -128,13 +128,12 @@ def calcDistance(sender_latitude, sender_longitude):
 
     return geodesic(origin, dist).meters
 
-
+hostname = input('Masukan Hostname: ')
 x = threading.Thread(target=receiver, args=())
 x.start()
 y = threading.Thread(target=sendBuffer, args=())
 y.start()
 
-hostname = input('Masukan Hostname: ')
 while True:
     penerima = input('Masukan Hostname Penerima: ')
     pesan = input('Masukan Pesan: ')
